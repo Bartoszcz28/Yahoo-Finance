@@ -1,0 +1,12 @@
+numpy
+pandas
+db-sqlite3
+yfinance
+peewee
+requests
+bs4
+DateTime
+psycopg2
+
+
+
