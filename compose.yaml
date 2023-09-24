@@ -1,6 +1,7 @@
 services:
   db:
     image: postgres
+    container_name: db
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
@@ -11,3 +12,5 @@ services:
       - "6000:5432"
   yahoo-api:
     build: ./yahoo-api/
+    container_name: yahoo-api
+    
