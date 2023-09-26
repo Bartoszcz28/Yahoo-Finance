@@ -13,4 +13,8 @@ services:
   yahoo-api:
     build: ./yahoo-api/
     container_name: yahoo-api
-    
+  dashboard:
+    build: ./dashboard/
+    container_name: dashboard
+    ports:
+      - "8501:8501"
