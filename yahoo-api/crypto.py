@@ -33,7 +33,7 @@ def scrape_crypto(cur, conn):
 
     names = [name.text for name in page.find_all('td', attrs={'aria-label':'Name'})]
     prices = [float(price.find('fin-streamer')['value']) for price in page.find_all('td', attrs={'aria-label':'Price (Intraday)'})]
-    changes = [float(change.text) for change in page.find_all('td', attrs={'aria-label':'Change'})]
+    changes = [float(change.text.replace(',','')) for change in page.find_all('td', attrs={'aria-label':'Change'})]
     percent_changes = [float(percent_change.text.replace('%', '').replace(',', '')) for percent_change in page.find_all('td', attrs={'aria-label':'% Change'})]
     market_caps = [market_cap.text for market_cap in page.find_all('td', attrs={'aria-label':'Market Cap'})]
     total_volumes = [total_volume.text for total_volume in page.find_all('td', attrs={'aria-label':'Volume in Currency (Since 0:00 UTC)'})]
