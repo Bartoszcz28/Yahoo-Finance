@@ -2,7 +2,8 @@
 # RUN git clone https://github.com/streamlit/streamlit-example.git .
 # RUN git clone https://github.com/dataprofessor/dashboard-v2.git .
 
-FROM python:3.9-slim
+FROM python:3.8
+# FROM python:3.9-slim
 
 WORKDIR /app
 
