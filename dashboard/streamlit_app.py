@@ -40,7 +40,16 @@ st.sidebar.subheader('Line chart parameters')
 
 
 # plot_data = st.sidebar.multiselect('Select data', ['temp_min', 'temp_max'], ['temp_min', 'temp_max'])
-selected_crypto = st.sidebar.selectbox('Select cryptocurrency', ['BTC', 'ETC'])
+# selected_crypto = st.sidebar.selectbox('Select cryptocurrency', ['BTC', 'ETC'])# Select data for the line chart
+selected_crypto = st.sidebar.selectbox('Select cryptocurrency', ["TrueUSD USD", "Shiba Inu USD", "Avalanche USD", "Polygon USD",
+                                                                "Tether USDt USD", "Cardano USD", "USD Coin USD", "Bitcoin USD",
+                                                                "Bitcoin Cash USD", "TRON USD", "UNUS SED LEO USD", "Dai USD",
+                                                                "Polkadot USD", "Solana USD", "XRP USD", "Stellar USD",
+                                                                "Wrapped Bitcoin USD", "Lido Staked ETH USD", "Wrapped Kava USD",
+                                                                "Toncoin USD", "Dogecoin USD", "BNB USD", "Chainlink USD",
+                                                                "Litecoin USD", "Wrapped TRON USD", "Ethereum USD"])
+
+
 plot_data = st.sidebar.multiselect('Select data', ["price", "change", "percent_change"], ["price", "change"])
 
 plot_height = st.sidebar.slider('Specify plot height', 200, 500, 250)
@@ -86,12 +95,18 @@ with c2:
         use_container_width=True)
 
 # # Row C
-# st.markdown('### Line chart')
+st.markdown('### Line chart')
 # st.line_chart(seattle_weather, x = 'date', y = plot_data, height = plot_height)
 
-if selected_crypto == 'BTC':
-    st.line_chart(btc.set_index('date')[plot_data].rename(columns={'price': 'BTC Price', 'change': 'BTC Change'}),
-                  use_container_width=True)
-elif selected_crypto == 'ETC':
-    st.line_chart(etc.set_index('date')[plot_data].rename(columns={'price': 'ETC Price', 'change': 'ETC Change'}),
-                  use_container_width=True)
+# if selected_crypto == 'BTC':
+#     st.line_chart(btc.set_index('date')[plot_data].rename(columns={'price': 'BTC Price', 'change': 'BTC Change'}),
+#                   use_container_width=True)
+# elif selected_crypto == 'ETC':
+#     st.line_chart(etc.set_index('date')[plot_data].rename(columns={'price': 'ETC Price', 'change': 'ETC Change'}),
+#                   use_container_width=True)
+    
+selected_crypto_data = crypto_df[crypto_df['name'] == selected_crypto]
+
+st.line_chart(selected_crypto_data.set_index('date')[plot_data].rename(columns={'price': f'{selected_crypto} Price',
+                                                                                 'change': f'{selected_crypto} Change'}),
+              use_container_width=True)
