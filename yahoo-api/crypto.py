@@ -7,6 +7,19 @@ from datetime import datetime
 time.sleep(15)
 print("Start!")
 
+def transform(col):
+    col = col.replace(',','')
+    if 'M' in col:
+        col = float(col.replace('M',''))
+        col = col * 1000000
+    elif 'B' in col:
+        col = float(col.replace('B',''))
+        col = col * 1000000000
+    elif 'T' in col:
+        col = float(col.replace('T',''))
+        col = col * 1000000000000
+    return col
+
 conn = psycopg2.connect(user="postgres", password="postgres", host="db", port="5432", database="postgres")
 cur = conn.cursor()
 
@@ -17,9 +30,9 @@ create_crypto_table = """ CREATE TABLE IF NOT EXISTS crypto (
     price DOUBLE PRECISION,
     change DOUBLE PRECISION,
     percent_change DOUBLE PRECISION,
-    market_cap TEXT,
-    total_volume TEXT,
-    circulate_supply TEXT,
+    market_cap DOUBLE PRECISION,
+    total_volume DOUBLE PRECISION,
+    circulate_supply DOUBLE PRECISION,
     ts TIMESTAMPTZ
 );  """
 
@@ -36,8 +49,11 @@ def scrape_crypto(cur, conn):
     changes = [float(change.text.replace(',','')) for change in page.find_all('td', attrs={'aria-label':'Change'})]
     percent_changes = [float(percent_change.text.replace('%', '').replace(',', '')) for percent_change in page.find_all('td', attrs={'aria-label':'% Change'})]
     market_caps = [market_cap.text for market_cap in page.find_all('td', attrs={'aria-label':'Market Cap'})]
+    market_caps = [transform(col) for col in market_caps] # Data transformation
     total_volumes = [total_volume.text for total_volume in page.find_all('td', attrs={'aria-label':'Volume in Currency (Since 0:00 UTC)'})]
+    total_volumes = [transform(col) for col in total_volumes] # Data transformation
     circulate_supplys = [circulate_supply.text for circulate_supply in page.find_all('td', attrs={'aria-label':'Circulating Supply'})]
+    circulate_supplys = [transform(col) for col in circulate_supplys] # Data transformation
 
     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
