@@ -1,6 +1,27 @@
 import streamlit as st
 import pandas as pd
 import plost
+import psycopg2 
+import time 
+
+#####################################################################################
+# Conection to database
+
+
+conn = psycopg2.connect(user="postgres", password="postgres", host="db", port="5432", database="postgres")
+cur = conn.cursor()
+
+query = "SELECT * FROM crypto;"
+cur.execute(query)
+crypto = cur.fetchall()
+crypto_df = pd.DataFrame(crypto)
+columns = ["id", "name", "price", "change", "percent_change", "market_cap", "total_volume", "circulate_supply", "date"]
+crypto_df.columns = columns
+
+####################################################################################
+etc = crypto_df[crypto_df["name"] == "Ethereum USD"]
+btc = crypto_df[crypto_df["name"] == "Bitcoin USD"]
+
 
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
@@ -16,12 +37,17 @@ st.sidebar.subheader('Donut chart parameter')
 donut_theta = st.sidebar.selectbox('Select data', ('q2', 'q3'))
 
 st.sidebar.subheader('Line chart parameters')
-plot_data = st.sidebar.multiselect('Select data', ['temp_min', 'temp_max'], ['temp_min', 'temp_max'])
+
+
+# plot_data = st.sidebar.multiselect('Select data', ['temp_min', 'temp_max'], ['temp_min', 'temp_max'])
+selected_crypto = st.sidebar.selectbox('Select cryptocurrency', ['BTC', 'ETC'])
+plot_data = st.sidebar.multiselect('Select data', ["price", "change", "percent_change"], ["price", "change"])
+
 plot_height = st.sidebar.slider('Specify plot height', 200, 500, 250)
 
 st.sidebar.markdown('''
 ---
-Created with ❤️ by [Data Professor](https://youtube.com/dataprofessor/).
+Created by Bartosz Czarnecki
 ''')
 
 
@@ -49,6 +75,7 @@ with c1:
     legend=None,
     height=345,
     use_container_width=True)
+    
 with c2:
     st.markdown('### Donut chart')
     plost.donut_chart(
@@ -58,6 +85,13 @@ with c2:
         legend='bottom', 
         use_container_width=True)
 
-# Row C
-st.markdown('### Line chart')
-st.line_chart(seattle_weather, x = 'date', y = plot_data, height = plot_height)
+# # Row C
+# st.markdown('### Line chart')
+# st.line_chart(seattle_weather, x = 'date', y = plot_data, height = plot_height)
+
+if selected_crypto == 'BTC':
+    st.line_chart(btc.set_index('date')[plot_data].rename(columns={'price': 'BTC Price', 'change': 'BTC Change'}),
+                  use_container_width=True)
+elif selected_crypto == 'ETC':
+    st.line_chart(etc.set_index('date')[plot_data].rename(columns={'price': 'ETC Price', 'change': 'ETC Change'}),
+                  use_container_width=True)
